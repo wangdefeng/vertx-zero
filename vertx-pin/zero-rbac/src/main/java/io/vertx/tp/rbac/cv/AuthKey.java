@@ -28,6 +28,7 @@ public interface AuthKey {
     String F_ROLE_ID = "roleId";
     String F_GROUP_ID = "groupId";
     String F_PARENT_ID = "parentId";
+    String F_PERMISSION_ID = "permissionId";
 
     String F_CLIENT_ID = "clientId";
     String F_CLIENT_SECRET = "clientSecret";
@@ -47,4 +48,15 @@ public interface AuthKey {
      */
     String PROFILE_PERM = "PERM";
     String PROFILE_ROLE = "ROLE";
+
+    interface Acl {
+        /*
+         * Five constant for checking
+         */
+        String BEFORE_PROJECTION = "BEFORE_PROJECTION";
+        String BEFORE_CRITERIA = "BEFORE_CRITERIA";
+        String AFTER_RECORD = "AFTER_RECORD";
+        String AFTER_ROWS = "AFTER_ROWS";
+        String AFTER_COLLECTION = "AFTER_COLLECTION";
+    }
 }

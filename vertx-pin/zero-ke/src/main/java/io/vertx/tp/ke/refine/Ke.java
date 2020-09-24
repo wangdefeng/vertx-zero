@@ -8,6 +8,7 @@ import io.vertx.ext.web.Session;
 import io.vertx.tp.ke.cv.KeField;
 import io.vertx.up.atom.record.Atomy;
 import io.vertx.up.commune.Envelop;
+import io.vertx.up.commune.element.Shape;
 import io.vertx.up.log.Annal;
 import io.vertx.up.unity.Ux;
 import io.vertx.up.util.Ut;
@@ -48,8 +49,16 @@ public class Ke {
         return KeElement.mount(field);
     }
 
+    public static Function<JsonArray, Future<JsonArray>> mounts(final String field) {
+        return KeElement.mounts(field);
+    }
+
     public static Function<JsonObject, Future<JsonObject>> mount(final String... field) {
         return KeElement.mount(field);
+    }
+
+    public static Function<JsonArray, Future<JsonArray>> mounts(final String... field) {
+        return KeElement.mounts(field);
     }
 
     public static JsonObject mountArray(final JsonObject response, final String field) {
@@ -70,12 +79,18 @@ public class Ke {
     }
 
     public static Future<JsonArray> combineAsync(final JsonArray data, final ConcurrentMap<String, String> headers) {
-        return KeTool.combineAsync(data, headers);
+        return KeExcel.combineAsync(data, headers);
     }
 
     public static Future<JsonArray> combineAsync(final JsonArray data, final ConcurrentMap<String, String> headers,
                                                  final List<String> columns) {
-        return KeTool.combineAsync(data, headers, columns);
+        return KeExcel.combineAsync(data, headers, columns, null);
+    }
+
+    public static Future<JsonArray> combineAsync(final JsonArray data, final ConcurrentMap<String, String> headers,
+                                                 final List<String> columns,
+                                                 final Shape shape) {
+        return KeExcel.combineAsync(data, headers, columns, shape);
     }
 
     public static Function<JsonObject, Future<JsonObject>> fabricAsync(final String field) {

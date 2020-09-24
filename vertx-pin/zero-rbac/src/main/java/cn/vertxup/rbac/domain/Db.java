@@ -33,7 +33,7 @@ public class Db extends SchemaImpl {
      * The reference instance of <code>DB_ETERNAL</code>
      */
     public static final Db DB_ETERNAL = new Db();
-    private static final long serialVersionUID = 1045966251;
+    private static final long serialVersionUID = -269186042;
     /**
      * The table <code>DB_ETERNAL.O_ACCESS_TOKEN</code>.
      */
@@ -75,6 +75,16 @@ public class Db extends SchemaImpl {
     public final SGroup S_GROUP = cn.vertxup.rbac.domain.tables.SGroup.S_GROUP;
 
     /**
+     * The table <code>DB_ETERNAL.S_PACKET</code>.
+     */
+    public final SPacket S_PACKET = cn.vertxup.rbac.domain.tables.SPacket.S_PACKET;
+
+    /**
+     * The table <code>DB_ETERNAL.S_PATH</code>.
+     */
+    public final SPath S_PATH = cn.vertxup.rbac.domain.tables.SPath.S_PATH;
+
+    /**
      * The table <code>DB_ETERNAL.S_PERMISSION</code>.
      */
     public final SPermission S_PERMISSION = cn.vertxup.rbac.domain.tables.SPermission.S_PERMISSION;
@@ -98,6 +108,11 @@ public class Db extends SchemaImpl {
      * The table <code>DB_ETERNAL.S_VIEW</code>.
      */
     public final SView S_VIEW = cn.vertxup.rbac.domain.tables.SView.S_VIEW;
+
+    /**
+     * The table <code>DB_ETERNAL.S_VISITANT</code>.
+     */
+    public final SVisitant S_VISITANT = cn.vertxup.rbac.domain.tables.SVisitant.S_VISITANT;
 
     /**
      * No further instances allowed
@@ -132,10 +147,13 @@ public class Db extends SchemaImpl {
                 RUserRole.R_USER_ROLE,
                 SAction.S_ACTION,
                 SGroup.S_GROUP,
+                SPacket.S_PACKET,
+                SPath.S_PATH,
                 SPermission.S_PERMISSION,
                 SResource.S_RESOURCE,
                 SRole.S_ROLE,
                 SUser.S_USER,
-                SView.S_VIEW);
+                SView.S_VIEW,
+                SVisitant.S_VISITANT);
     }
 }

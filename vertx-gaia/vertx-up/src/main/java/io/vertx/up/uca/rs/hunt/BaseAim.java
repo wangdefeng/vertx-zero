@@ -151,8 +151,7 @@ public abstract class BaseAim {
             }
             consumer.execute();
         } catch (final WebException ex) {
-            final Envelop envelop = Envelop.failure(ex);
-            Answer.reply(context, envelop, event);
+            Flower.replyError(context, ex, event);
         }
     }
 }

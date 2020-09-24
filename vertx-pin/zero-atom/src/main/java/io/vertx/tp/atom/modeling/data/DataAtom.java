@@ -1,24 +1,22 @@
 package io.vertx.tp.atom.modeling.data;
 
-import cn.vertxup.atom.domain.tables.pojos.MAttribute;
 import io.vertx.tp.atom.cv.AoCache;
 import io.vertx.tp.atom.cv.AoMsg;
 import io.vertx.tp.atom.modeling.Model;
+import io.vertx.tp.atom.modeling.reference.DataQRule;
+import io.vertx.tp.atom.modeling.reference.DataQuote;
 import io.vertx.tp.atom.refine.Ao;
 import io.vertx.tp.modular.phantom.AoPerformer;
+import io.vertx.up.commune.element.CParam;
+import io.vertx.up.commune.element.Shape;
 import io.vertx.up.commune.rule.RuleUnique;
 import io.vertx.up.fn.Fn;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * 内部使用的元数据分析工具，提供
@@ -27,24 +25,38 @@ import java.util.stream.Collectors;
 public class DataAtom {
 
     private transient final AoPerformer performer;
-    private transient final Model model;
 
-    private transient final String identifier;
     private transient final String unique;
-    private transient RuleUnique rule;
+    private transient final String appName;
+
+    private transient final MetaInfo metadata;
+    private transient final MetaRule ruler;
+    private transient final MetaMarker marker;
+    private transient final MetaReference reference;
 
     private DataAtom(final String appName,
                      final String identifier,
                      final String unique) {
-        /* 当前模型的ID */
-        this.identifier = identifier;
         /* Performer池化（每个App不一样）*/
+        this.appName = appName;
         this.performer = AoPerformer.getInstance(appName);
         /* 构造当前模型的唯一值，从外置传入 */
         this.unique = unique;
-        this.model = Fn.pool(AoCache.POOL_MODELS, unique, () -> this.performer.fetchModel(identifier));
+        final Model model = Fn.pool(AoCache.POOL_MODELS, unique, () -> this.performer.fetchModel(identifier));
+        /*
+         * 1. 基础模型信息
+         * 2. 标识规则信息
+         * 3. 基础标识信息
+         * 4. 数据引用信息
+         */
+        final Integer modelCode = model.hashCode();
+        this.metadata = Fn.pool(Pool.META_INFO, modelCode, () -> new MetaInfo(model));
+        this.ruler = Fn.pool(Pool.META_RULE, modelCode, () -> new MetaRule(model));
+        this.marker = Fn.pool(Pool.META_MARKER, modelCode, () -> new MetaMarker(model));
+        this.reference = Fn.pool(Pool.META_REFERENCE, modelCode, () -> new MetaReference(model));
+
         /* LOG: 日志处理 */
-        Ao.infoAtom(this.getClass(), AoMsg.DATA_ATOM, unique, this.model.toJson().encode());
+        Ao.infoAtom(this.getClass(), AoMsg.DATA_ATOM, unique, model.toJson().encode());
     }
 
     public static DataAtom get(final String appName,
@@ -75,168 +87,153 @@ public class DataAtom {
          */
         final String unique = Model.namespace(appName) + "-" + identifier;
         return new DataAtom(appName, identifier, unique);
-        /*
-        final String unique = Model.namespace(appName) + "-" + identifier;
-        final DataAtom atom = Fn.pool(AoCache.POOL_ATOM, unique, () -> new DataAtom(appName, identifier, unique));
-        return atom.connect(null);*/
     }
 
-    /**
-     * 返回当前 Model 中的所有属性集
-     */
-    Set<String> attributes() {
-        return this.model.getAttributes().stream()
-                .map(MAttribute::getName)
-                .collect(Collectors.toSet());
+    // ------------ 基础模型部分 ------------
+
+    /** 返回当前 Model 中的所有属性集 */
+    public Set<String> attributes() {
+        return this.metadata.attributes();
     }
 
+    /** 返回 name = alias */
+    public ConcurrentMap<String, String> alias() {
+        return this.metadata.alias();
+    }
 
     public Model getModel() {
-        return this.model;
+        return this.metadata.reference();
     }
 
+    /* 返回当前记录关联的 identifier */
+    public String identifier() {
+        return this.metadata.identifier();
+    }
+
+    /* 返回当前记录专用的 sigma */
+    public String sigma() {
+        return this.metadata.sigma();
+    }
+
+    /* 返回语言信息 */
+    public String language() {
+        return this.metadata.language();
+    }
+
+    /* 属性类型 */
+    public ConcurrentMap<String, Class<?>> type() {
+        return this.metadata.type();
+    }
+
+    /** 返回 Shape 对象 */
+    public Shape shape() {
+        return this.metadata.shape();
+    }
+
+    public Class<?> type(final String field) {
+        return this.metadata.type(field);
+    }
+
+    // ------------ 比对专用方法 ----------
+
+    /** 返回 CParam 对象 */
+    public CParam diff() {
+        return this.metadata.diff().diff(this.reference.ruleDiff());
+    }
+
+    public CParam diff(final Set<String> ignoreSet) {
+        return this.metadata.diff(ignoreSet).diff(this.reference.ruleDiff());
+    }
+
+    public Set<String> diffSet(final String field) {
+        return this.reference.ruleDiff().getOrDefault(field, new HashSet<>());
+    }
     // ------------ 标识规则 ----------
 
-    /**
-     * 返回当前模型中的标识规则
-     */
+    /** 存储的规则 */
     public RuleUnique rule() {
-        return this.model.getUnique();
+        return this.ruler.rule();
     }
 
-    /*
-     * 直接返回当前模型连接的标识规则（第二标识规则）
-     */
+    /** 连接的规则 */
     public RuleUnique ruleDirect() {
-        return this.rule;
+        return this.ruler.ruleDirect();
     }
 
-    /*
-     * 1）先检索连接的标识规则：Slave
-     * 2）再检索存储的标识规则：Master
-     */
+    /** 智能检索规则 */
     public RuleUnique ruleSmart() {
-        if (Objects.nonNull(this.rule)) {
-            return this.rule;
-        } else {
-            return this.model.getUnique();
-        }
+        return this.ruler.ruleSmart();
     }
 
-    public DataAtom connect(final RuleUnique channelRule) {
-        this.rule = channelRule;
+    /** 规则的链接 */
+    public DataAtom ruleConnect(final RuleUnique channelRule) {
+        this.ruler.connect(channelRule);
         return this;
     }
-    // ------------ 属性检查的特殊功能，收集相关属性 ----------
 
-    public Boolean isTrack() {
-        final Boolean result = this.model.getModel().getIsTrack();
-        return Objects.isNull(result) ? Boolean.FALSE : Boolean.TRUE;
+    // ------------ 引用部分 ------------
+    public ConcurrentMap<DataAtom, DataQuote> ref() {
+        final ConcurrentMap<DataAtom, DataQuote> switched = new ConcurrentHashMap<>();
+        this.reference.references().forEach((source, quote) -> {
+            /*
+             * DataAtom 交换
+             */
+            final DataAtom atomRef = DataAtom.get(this.appName, source);
+            switched.put(atomRef, quote);
+        });
+        return switched;
+    }
+
+    public ConcurrentMap<String, DataQRule> refRules() {
+        return this.reference.rules();
+    }
+
+    // ------------ 属性检查的特殊功能，收集相关属性 ----------
+    /*
+     * 模型本身打开Track属性
+     */
+    public Boolean trackable() {
+        return this.marker.trackable();
     }
 
     /*
      * 解决空指针问题，
      * isTrack
+     * isConfirm
      * isSyncIn
      * isSyncOut
-     * 三个字段可能没有值
      */
-    public Set<String> auditTrack() {
-        return this.audit(attr -> {
-            final Boolean result = attr.getIsTrack();
-            return Objects.isNull(result) ? Boolean.FALSE : result;
-        });
+    public Set<String> falseTrack() {
+        return this.marker.track(Boolean.FALSE);
     }
 
-    public Set<String> ignoreTrack() {
-        return this.audit(attr -> {
-            final Boolean result = attr.getIsTrack();
-            return Objects.isNull(result) ? Boolean.TRUE : !result;
-        });
+    public Set<String> trueTrack() {
+        return this.marker.track(Boolean.TRUE);
     }
 
-    public Set<String> auditIn() {
-        return this.audit(attr -> {
-            final Boolean result = attr.getIsSyncIn();
-            return Objects.isNull(result) ? Boolean.FALSE : result;
-        });
+    public Set<String> falseIn() {
+        return this.marker.in(Boolean.FALSE);
     }
 
-    public Set<String> ignoreIn() {
-        return this.audit(attr -> {
-            final Boolean result = attr.getIsSyncIn();
-            return Objects.isNull(result) ? Boolean.TRUE : !result;
-        });
+    public Set<String> trueIn() {
+        return this.marker.in(Boolean.TRUE);
     }
 
-    public Set<String> auditOut() {
-        return this.audit(attr -> {
-            final Boolean result = attr.getIsSyncOut();
-            return Objects.isNull(result) ? Boolean.FALSE : result;
-        });
+    public Set<String> falseOut() {
+        return this.marker.out(Boolean.FALSE);
     }
 
-    public Set<String> ignoreOut() {
-        return this.audit(attr -> {
-            final Boolean result = attr.getIsSyncOut();
-            return Objects.isNull(result) ? Boolean.TRUE : !result;
-        });
+    public Set<String> trueOut() {
+        return this.marker.out(Boolean.TRUE);
     }
 
-    public Class<?> dateField(final String field) {
-        return this.model.types().get(field);
+    public Set<String> falseConfirm() {
+        return this.marker.confirm(Boolean.FALSE);
     }
 
-    public boolean isDateField(final String field) {
-        return this.dateFields().containsKey(field);
+    public Set<String> trueConfirm() {
+        return this.marker.confirm(Boolean.TRUE);
     }
-
-    /*
-     * 属性类型
-     */
-    public ConcurrentMap<String, Class<?>> types() {
-        return this.model.types();
-    }
-
-    private Set<String> audit(final Predicate<MAttribute> predicate) {
-        return this.model.getAttributes().stream()
-                .filter(predicate)
-                .map(MAttribute::getName)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-    }
-
-
-    /*
-     * 时间格式处理
-     */
-    private ConcurrentMap<String, Class<?>> dateFields() {
-        final ConcurrentMap<String, Class<?>> dataFields = new ConcurrentHashMap<>();
-        this.model.types().forEach((field, type) -> {
-            if (LocalDateTime.class == type || LocalDate.class == type || LocalTime.class == type || Date.class == type) {
-                dataFields.put(field, type);
-            }
-        });
-        return dataFields;
-    }
-
-    // ------------ 返回特殊元数据（包域） ----------
-    /* 返回当前记录关联的 identifier */
-    public String identifier() {
-        return this.identifier;
-    }
-
-    public String sigma() {
-        return this.getModel().getModel().getSigma();
-    }
-
-    /* 返回当前记录对应的名空间 */
-    String namespace() {
-        return this.model.getModel().getNamespace();
-    }
-
-    /* 返回当前记录专用的 sigma */
-
 
     @Override
     public boolean equals(final Object o) {

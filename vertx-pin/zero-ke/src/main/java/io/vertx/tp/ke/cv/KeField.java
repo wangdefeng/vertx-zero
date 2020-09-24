@@ -5,13 +5,16 @@ public interface KeField {
     String GLOBAL_ID = "globalId";              /* Third part global id of primary key */
 
     String FIELD = "field";                     /* Model definition field */
+    String FIELDS = "fields";                   /* Model definition fields */
+    String FORM = "form";                       /* Form */
     String MODEL = "model";                     /* Model definition field */
-    String ENTITY = "entity";                     /* Model definition field */
+    String ENTITY = "entity";                   /* Model definition field */
     String JOINED_KEY = "joinedKey";            /* Model definition for connect model to schema */
     String ENTITY_ID = "entityId";              /* Model definition to stored related Entity Id of Field/Key/Index */
     String NAMESPACE = "namespace";             /* Model definition of Multi-App environment, each application contains only one namespace */
     String IDENTIFIER = "identifier";           /* Model definition, identifier field ( Uniform identifier ) */
     String RULE_UNIQUE = "ruleUnique";          /* Model definition, ruleUnique field */
+    String RULE = "rule";                       /* Model definition, rule for source reference */
     String TABLE_NAME = "tableName";            /* Model definition, tableName field */
 
     String MODEL_ID = "modelId";                /* Model Consumer ( identifier ) field */
@@ -26,9 +29,11 @@ public interface KeField {
     String DYNAMIC = "dynamic";                 /* View security of field for dynamic view name */
     String VIEW = "view";                       /* View security of view name */
 
+    String ROLE_ID = "roleId";                  /* Security Object: role id ( X_ROLE key ) field */
     String USER_ID = "userId";                  /* Security Object: user id ( X_USER key ) field */
     String USERNAME = "username";               /* Security Object: user name ( X_USER username) field*/
     String REAL_NAME = "realname";              /* Security Object: user real name field */
+    String GROUP = "group";                     /* Security Object: group */
     String ALIAS = "alias";                     /* Security Object: another name for current */
     String PASSWORD = "password";               /* Security Object: Password belong to field of security framework, ( X_USER password ) field */
     String EMAIL = "email";                     /* Security Object: user email ( X_USER email ) field */
@@ -60,6 +65,7 @@ public interface KeField {
     String CATEGORY = "category";               /* Common: category */
     String SERVICE = "service";                 /* Common: service */
     String DATA = "data";                       /* Common: data */
+    String DATUM = "datum";                     /* Common: metadata key */
     String MAPPING = "mapping";                 /* Common: Json mapping configuration */
     String STATUS = "status";                   /* Common: status for different workflow */
     String SERIAL = "serial";                   /* Common: serial field ( XNumber related or other meaningful serial */
@@ -87,6 +93,7 @@ public interface KeField {
     String RECORD = "record";                   /* Change calculation for data record */
     String RECORD_NEW = "recordNew";            /* Change calculation to store the latest record */
     String RECORD_OLD = "recordOld";            /* Change calculation to store the previous record */
+    String NEXT = "next";                       /* Whether next trigger */
 
     String CREATED_AT = "createdAt";            /* Auditor created At */
     String UPDATED_AT = "updatedAt";            /* Auditor updated At */
@@ -97,6 +104,12 @@ public interface KeField {
     String DEPT_ID = "deptId";                  /* Department Id */
     String TEAM_ID = "teamId";                  /* Team Id */
     String WORK_NUMBER = "workNumber";          /* Work Number */
+
+    String CONFIG = "config";                   /* Acl Usage */
+    String PHASE = "phase";                     /* Acl Phase */
+    String SEEKER = "seeker";                   /* Acl Seeker */
+    String SYNTAX = "syntax";                   /* Acl Syntax */
+    String VIEW_ID = "viewId";                  /* View Id */
 
     /*
      * X_APP
@@ -192,4 +205,16 @@ public interface KeField {
         String EDGE = "edge";                     /* Graphic edge */
         String EDGES = "edges";                   /* Graphic edges */
     }
+
+    interface Rbac {
+        String ROLE_ID = "roleId";
+        String PERM_ID = "permId";
+
+        // view related
+        String PROJECTION = "projection";
+        String CRITERIA = "criteria";
+        String ROWS = "rows";
+        String POSITION = "position";
+    }
+
 }

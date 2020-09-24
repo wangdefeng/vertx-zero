@@ -46,7 +46,7 @@ public class FieldService implements FieldStub {
         final List<UiField> fields = Ut.itJArray(data)
                 // filter(deduplicate) by name
                 .filter(item -> (!item.containsKey(KeField.NAME)) ||
-                                (Ut.notNil(item.getString(KeField.NAME)) && null == seen.putIfAbsent(item.getString(KeField.NAME), Boolean.TRUE)))
+                        (Ut.notNil(item.getString(KeField.NAME)) && null == seen.putIfAbsent(item.getString(KeField.NAME), Boolean.TRUE)))
                 .map(this::mountIn)
                 .map(field -> field.put(KeField.Ui.CONTROL_ID, Optional.ofNullable(field.getString(KeField.Ui.CONTROL_ID)).orElse(controlId)))
                 .map(field -> Ux.fromJson(field, UiField.class))
@@ -58,7 +58,7 @@ public class FieldService implements FieldStub {
                         .compose(Ux::fnJArray)
                         // 3. mountOut
                         .compose(updatedFields -> {
-                            List<JsonObject> list = Ut.itJArray(updatedFields)
+                            final List<JsonObject> list = Ut.itJArray(updatedFields)
                                     .map(this::mountOut)
                                     .collect(Collectors.toList());
                             return Ux.future(new JsonArray(list));
@@ -66,7 +66,7 @@ public class FieldService implements FieldStub {
     }
 
     @Override
-    public Future<Boolean> deleteByControlId(String controlId) {
+    public Future<Boolean> deleteByControlId(final String controlId) {
         return Ux.Jooq.on(UiFieldDao.class)
                 .deleteAsync(new JsonObject().put(KeField.Ui.CONTROL_ID, controlId));
     }
@@ -102,7 +102,16 @@ public class FieldService implements FieldStub {
                 final JsonObject dataCell = new JsonObject();
                 if (RowType.TITLE == rowType) {
                     dataCell.put("title", cell.getValue("label"));
-                    dataCell.put("field", cell.getValue("key"));    // Specific field for title.
+                    dataCell.put("field", cell.getValue(KeField.KEY));    // Specific field for title.
+                } else if (RowType.CONTAINER == rowType) {
+                    dataCell.put("complex", Boolean.TRUE);
+                    // Container type will be mapped to name field here
+                    dataCell.put(KeField.NAME, cell.getValue("container"));
+                    // optionJsx -> config
+                    Ke.mount(cell, FieldStub.OPTION_JSX);
+                    if (Objects.nonNull(cell.getValue(FieldStub.OPTION_JSX))) {
+                        dataCell.put(KeField.Ui.CONFIG, cell.getValue(FieldStub.OPTION_JSX));
+                    }
                 } else {
                     Ke.mount(cell, FieldStub.OPTION_JSX);
                     Ke.mount(cell, FieldStub.OPTION_CONFIG);
@@ -151,13 +160,21 @@ public class FieldService implements FieldStub {
                      * In this kind of situation, the config `optionJsx` must contains `config.format` here.
                      */
                     final JsonObject optionJsx = cell.getJsonObject(FieldStub.OPTION_JSX);
+
                     if (Ut.notNil(optionJsx)) {
                         final JsonObject config = optionJsx.getJsonObject("config");
                         if (Ut.notNil(config) && config.containsKey("format")) {
                             /*
                              * Date here for moment = true
+                             * Here are some difference between two components
+                             * 1) For `Date`, the format should be string
+                             * 2) For `TableEditor`, the format should be object
+                             * The table editor is added new here
                              */
-                            dataCell.put("moment", true);
+                            final Object format = config.getValue("format");
+                            if (String.class == format.getClass()) {
+                                dataCell.put("moment", true);
+                            }
                         }
                     }
                 }
@@ -176,6 +193,7 @@ public class FieldService implements FieldStub {
         Ke.mountString(data, KeField.METADATA);
         return data;
     }
+
     private JsonObject mountOut(final JsonObject data) {
         Ke.mount(data, FieldStub.OPTION_JSX);
         Ke.mount(data, FieldStub.OPTION_CONFIG);

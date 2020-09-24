@@ -2,7 +2,6 @@ package io.vertx.up.util;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.up.eon.Strings;
-import io.vertx.up.exception.heart.JexlExpressionException;
 import io.vertx.up.fn.Fn;
 import org.apache.commons.jexl3.*;
 
@@ -133,13 +132,19 @@ final class StringUtil {
             Ut.itJObject(params, (value, key) -> context.set(key, value));
             return expression.evaluate(context).toString();
         } catch (final JexlException ex) {
-            ex.printStackTrace();   // For Debug
-            throw new JexlExpressionException(StringUtil.class, expr, ex);
+            // ex.printStackTrace();    // For Debug
+            return null;                // Get null
+            // throw new JexlExpressionException(StringUtil.class, expr, ex);
         }
     }
 
     static boolean isNil(final String input) {
         return null == input || 0 == input.trim().length();
+    }
+
+    static boolean isNilOr(final String... inputs) {
+        final long counter = Arrays.stream(inputs).filter(StringUtil::isNil).count();
+        return counter != 0L;
     }
 
     static boolean notNil(final String input) {

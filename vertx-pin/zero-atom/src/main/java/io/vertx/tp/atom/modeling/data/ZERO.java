@@ -3,6 +3,8 @@ package io.vertx.tp.atom.modeling.data;
 import cn.vertxup.atom.domain.tables.pojos.MAttribute;
 import cn.vertxup.atom.domain.tables.pojos.MField;
 import cn.vertxup.atom.domain.tables.pojos.MJoin;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.tp.atom.modeling.Model;
 import io.vertx.tp.atom.modeling.Schema;
 import io.vertx.tp.atom.modeling.element.DataKey;
@@ -10,17 +12,28 @@ import io.vertx.tp.atom.modeling.element.DataRow;
 import io.vertx.tp.atom.modeling.element.DataTpl;
 import io.vertx.tp.error._417RelatedFieldMissingException;
 import io.vertx.tp.error._417RelatedSchemaMissingException;
+import io.vertx.tp.ke.cv.KeField;
+import io.vertx.up.commune.element.ShapeItem;
 import io.vertx.up.fn.Fn;
 import io.vertx.up.log.Annal;
 import io.vertx.up.util.Ut;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+interface Pool {
+    // 基础模型池
+    ConcurrentMap<Integer, MetaInfo> META_INFO = new ConcurrentHashMap<>();
+    // 标识规则信息
+    ConcurrentMap<Integer, MetaRule> META_RULE = new ConcurrentHashMap<>();
+    // 基础标识信息
+    ConcurrentMap<Integer, MetaMarker> META_MARKER = new ConcurrentHashMap<>();
+    // 数据引用信息
+    ConcurrentMap<Integer, MetaReference> META_REFERENCE = new ConcurrentHashMap<>();
+}
 
 /**
  * 连接专用
@@ -58,7 +71,6 @@ class Bridge {
                  * 过滤器，用于过滤不满足条件的 ( schema, attribute ) 键值对
                  */
                 (schema, attribute) -> attribute.getSource().equals(schema.identifier()));
-
         /*
          * FIX：解决Schema中的主键问题
          * 1. 对于 JOIN_MULTI 这种情况，在这里初始化 Matrix 的时候，有可能出现主键没有被记录到 Matrix的情况
@@ -98,6 +110,35 @@ class Bridge {
 
     private static MAttribute toAttribute(final Schema schema, final MField field) {
         return toAttribute(schema, field, field.getName());
+    }
+
+    static List<ShapeItem> toShape(final MAttribute attribute, final Function<MAttribute, String> consumer) {
+        final JsonObject sourceConfig = Ut.toJObject(consumer.apply(attribute));
+        final JsonArray fields = Ut.sureJArray(sourceConfig.getJsonArray(KeField.FIELDS));
+        final List<ShapeItem> result = new ArrayList<>();
+        if (Ut.notNil(fields)) {
+            /*
+             * [
+             *      {
+             *          "field": "xxx",
+             *          "alias": "xxx",
+             *          "type": "java type class"
+             *      }
+             * ]
+             */
+            Ut.itJArray(fields).forEach(item -> {
+                /*
+                 * field, alias, type
+                 */
+                final String field = item.getString(KeField.FIELD);
+                final String alias = item.getString(KeField.ALIAS);
+                final Class<?> type = Ut.clazz(item.getString(KeField.TYPE), String.class);
+                if (Ut.notNil(field)) {
+                    result.add(ShapeItem.create(field, alias, type));
+                }
+            });
+        }
+        return result;
     }
 
     @SuppressWarnings("all")

@@ -12,11 +12,14 @@ import cn.vertxup.rbac.domain.tables.RUserGroup;
 import cn.vertxup.rbac.domain.tables.RUserRole;
 import cn.vertxup.rbac.domain.tables.SAction;
 import cn.vertxup.rbac.domain.tables.SGroup;
+import cn.vertxup.rbac.domain.tables.SPacket;
+import cn.vertxup.rbac.domain.tables.SPath;
 import cn.vertxup.rbac.domain.tables.SPermission;
 import cn.vertxup.rbac.domain.tables.SResource;
 import cn.vertxup.rbac.domain.tables.SRole;
 import cn.vertxup.rbac.domain.tables.SUser;
 import cn.vertxup.rbac.domain.tables.SView;
+import cn.vertxup.rbac.domain.tables.SVisitant;
 import cn.vertxup.rbac.domain.tables.records.OAccessTokenRecord;
 import cn.vertxup.rbac.domain.tables.records.OUserRecord;
 import cn.vertxup.rbac.domain.tables.records.RGroupRoleRecord;
@@ -25,11 +28,14 @@ import cn.vertxup.rbac.domain.tables.records.RUserGroupRecord;
 import cn.vertxup.rbac.domain.tables.records.RUserRoleRecord;
 import cn.vertxup.rbac.domain.tables.records.SActionRecord;
 import cn.vertxup.rbac.domain.tables.records.SGroupRecord;
+import cn.vertxup.rbac.domain.tables.records.SPacketRecord;
+import cn.vertxup.rbac.domain.tables.records.SPathRecord;
 import cn.vertxup.rbac.domain.tables.records.SPermissionRecord;
 import cn.vertxup.rbac.domain.tables.records.SResourceRecord;
 import cn.vertxup.rbac.domain.tables.records.SRoleRecord;
 import cn.vertxup.rbac.domain.tables.records.SUserRecord;
 import cn.vertxup.rbac.domain.tables.records.SViewRecord;
+import cn.vertxup.rbac.domain.tables.records.SVisitantRecord;
 
 import javax.annotation.Generated;
 
@@ -74,6 +80,10 @@ public class Keys {
     public static final UniqueKey<SActionRecord> KEY_S_ACTION_URI = UniqueKeys0.KEY_S_ACTION_URI;
     public static final UniqueKey<SGroupRecord> KEY_S_GROUP_PRIMARY = UniqueKeys0.KEY_S_GROUP_PRIMARY;
     public static final UniqueKey<SGroupRecord> KEY_S_GROUP_CODE = UniqueKeys0.KEY_S_GROUP_CODE;
+    public static final UniqueKey<SPacketRecord> KEY_S_PACKET_PRIMARY = UniqueKeys0.KEY_S_PACKET_PRIMARY;
+    public static final UniqueKey<SPacketRecord> KEY_S_PACKET_PATH_ID = UniqueKeys0.KEY_S_PACKET_PATH_ID;
+    public static final UniqueKey<SPathRecord> KEY_S_PATH_PRIMARY = UniqueKeys0.KEY_S_PATH_PRIMARY;
+    public static final UniqueKey<SPathRecord> KEY_S_PATH_CODE = UniqueKeys0.KEY_S_PATH_CODE;
     public static final UniqueKey<SPermissionRecord> KEY_S_PERMISSION_PRIMARY = UniqueKeys0.KEY_S_PERMISSION_PRIMARY;
     public static final UniqueKey<SPermissionRecord> KEY_S_PERMISSION_CODE = UniqueKeys0.KEY_S_PERMISSION_CODE;
     public static final UniqueKey<SResourceRecord> KEY_S_RESOURCE_PRIMARY = UniqueKeys0.KEY_S_RESOURCE_PRIMARY;
@@ -85,6 +95,8 @@ public class Keys {
     public static final UniqueKey<SUserRecord> KEY_S_USER_EMAIL = UniqueKeys0.KEY_S_USER_EMAIL;
     public static final UniqueKey<SViewRecord> KEY_S_VIEW_PRIMARY = UniqueKeys0.KEY_S_VIEW_PRIMARY;
     public static final UniqueKey<SViewRecord> KEY_S_VIEW_OWNER = UniqueKeys0.KEY_S_VIEW_OWNER;
+    public static final UniqueKey<SVisitantRecord> KEY_S_VISITANT_PRIMARY = UniqueKeys0.KEY_S_VISITANT_PRIMARY;
+    public static final UniqueKey<SVisitantRecord> KEY_S_VISITANT_VIEW_ID = UniqueKeys0.KEY_S_VISITANT_VIEW_ID;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -110,6 +122,10 @@ public class Keys {
         public static final UniqueKey<SActionRecord> KEY_S_ACTION_URI = Internal.createUniqueKey(SAction.S_ACTION, "KEY_S_ACTION_URI", SAction.S_ACTION.URI, SAction.S_ACTION.METHOD, SAction.S_ACTION.SIGMA);
         public static final UniqueKey<SGroupRecord> KEY_S_GROUP_PRIMARY = Internal.createUniqueKey(SGroup.S_GROUP, "KEY_S_GROUP_PRIMARY", SGroup.S_GROUP.KEY);
         public static final UniqueKey<SGroupRecord> KEY_S_GROUP_CODE = Internal.createUniqueKey(SGroup.S_GROUP, "KEY_S_GROUP_CODE", SGroup.S_GROUP.CODE, SGroup.S_GROUP.SIGMA);
+        public static final UniqueKey<SPacketRecord> KEY_S_PACKET_PRIMARY = Internal.createUniqueKey(SPacket.S_PACKET, "KEY_S_PACKET_PRIMARY", SPacket.S_PACKET.KEY);
+        public static final UniqueKey<SPacketRecord> KEY_S_PACKET_PATH_ID = Internal.createUniqueKey(SPacket.S_PACKET, "KEY_S_PACKET_PATH_ID", SPacket.S_PACKET.PATH_ID, SPacket.S_PACKET.RESOURCE_ID, SPacket.S_PACKET.SIGMA);
+        public static final UniqueKey<SPathRecord> KEY_S_PATH_PRIMARY = Internal.createUniqueKey(SPath.S_PATH, "KEY_S_PATH_PRIMARY", SPath.S_PATH.KEY);
+        public static final UniqueKey<SPathRecord> KEY_S_PATH_CODE = Internal.createUniqueKey(SPath.S_PATH, "KEY_S_PATH_CODE", SPath.S_PATH.CODE, SPath.S_PATH.SIGMA);
         public static final UniqueKey<SPermissionRecord> KEY_S_PERMISSION_PRIMARY = Internal.createUniqueKey(SPermission.S_PERMISSION, "KEY_S_PERMISSION_PRIMARY", SPermission.S_PERMISSION.KEY);
         public static final UniqueKey<SPermissionRecord> KEY_S_PERMISSION_CODE = Internal.createUniqueKey(SPermission.S_PERMISSION, "KEY_S_PERMISSION_CODE", SPermission.S_PERMISSION.CODE, SPermission.S_PERMISSION.SIGMA);
         public static final UniqueKey<SResourceRecord> KEY_S_RESOURCE_PRIMARY = Internal.createUniqueKey(SResource.S_RESOURCE, "KEY_S_RESOURCE_PRIMARY", SResource.S_RESOURCE.KEY);
@@ -121,5 +137,7 @@ public class Keys {
         public static final UniqueKey<SUserRecord> KEY_S_USER_EMAIL = Internal.createUniqueKey(SUser.S_USER, "KEY_S_USER_EMAIL", SUser.S_USER.EMAIL, SUser.S_USER.SIGMA);
         public static final UniqueKey<SViewRecord> KEY_S_VIEW_PRIMARY = Internal.createUniqueKey(SView.S_VIEW, "KEY_S_VIEW_PRIMARY", SView.S_VIEW.KEY);
         public static final UniqueKey<SViewRecord> KEY_S_VIEW_OWNER = Internal.createUniqueKey(SView.S_VIEW, "KEY_S_VIEW_OWNER", SView.S_VIEW.OWNER, SView.S_VIEW.OWNER_TYPE, SView.S_VIEW.RESOURCE_ID, SView.S_VIEW.NAME);
+        public static final UniqueKey<SVisitantRecord> KEY_S_VISITANT_PRIMARY = Internal.createUniqueKey(SVisitant.S_VISITANT, "KEY_S_VISITANT_PRIMARY", SVisitant.S_VISITANT.KEY);
+        public static final UniqueKey<SVisitantRecord> KEY_S_VISITANT_VIEW_ID = Internal.createUniqueKey(SVisitant.S_VISITANT, "KEY_S_VISITANT_VIEW_ID", SVisitant.S_VISITANT.VIEW_ID, SVisitant.S_VISITANT.TYPE, SVisitant.S_VISITANT.CONFIG_KEY);
     }
 }

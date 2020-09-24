@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.up.commune.Envelop;
+import io.vertx.up.commune.secure.Acl;
 import io.vertx.up.log.Annal;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public class Sc {
     public static void warnWeb(final Class<?> clazz, final String pattern, final Object... args) {
         final Annal LOGGER = Annal.get(clazz);
         ScLog.warnWeb(LOGGER, pattern, args);
+    }
+
+    public static void infoView(final Class<?> clazz, final String pattern, final Object... args) {
+        final Annal LOGGER = Annal.get(clazz);
+        ScLog.infoView(LOGGER, pattern, args);
     }
 
     /*
@@ -146,5 +152,16 @@ public class Sc {
 
     public static <T> Future<List<T>> composite(final CompositeFuture res) {
         return ScFn.composite(res);
+    }
+
+    /*
+     * Acl method
+     */
+    public static JsonArray aclOn(final JsonArray original, final Acl acl) {
+        return ScAcl.aclOn(original, acl);
+    }
+
+    public static void aclRecord(final JsonObject record, final Acl acl) {
+        ScAcl.aclRecord(record, acl);
     }
 }

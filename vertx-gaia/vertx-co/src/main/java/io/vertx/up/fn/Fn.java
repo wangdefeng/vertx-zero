@@ -58,15 +58,6 @@ public final class Fn {
         return Wait.branch(condition, executor, caseLine);
     }
 
-    // ------ Async future / or steps
-    public static <T> Future<T> future(final Supplier<Future<T>> caseLine) {
-        return Wait.branch(caseLine).second.get();
-    }
-
-    public static <T> Future<T> future(final Actuator executor, final Supplier<Future<T>> caseLine) {
-        return Wait.branch(executor, caseLine).second.get();
-    }
-
     public static <T> Future<T> thenGeneric(final Consumer<Promise<T>> consumer) {
         return Wait.then(consumer);
     }
@@ -188,6 +179,14 @@ public final class Fn {
 
     public static <T> T getNull(final T defaultValue, final Supplier<T> supplier) {
         return Semi.execReturn(supplier, defaultValue);
+    }
+
+    public static <T> T getEmpty(final Supplier<T> supplier, final String... input) {
+        return Zero.getEmpty(null, supplier, input);
+    }
+
+    public static <T> T getEmpty(final T defaultValue, final Supplier<T> supplier, final String... input) {
+        return Zero.getEmpty(defaultValue, supplier, input);
     }
 
     // ------ Semi Safe

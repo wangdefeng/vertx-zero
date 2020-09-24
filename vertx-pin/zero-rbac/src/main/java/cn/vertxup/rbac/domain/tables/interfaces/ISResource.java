@@ -54,6 +54,26 @@ public interface ISResource extends Serializable {
     public String getName();
 
     /**
+     * Setter for <code>DB_ETERNAL.S_RESOURCE.TYPE</code>. 「type」- 资源分类
+     */
+    public ISResource setType(String value);
+
+    /**
+     * Getter for <code>DB_ETERNAL.S_RESOURCE.TYPE</code>. 「type」- 资源分类
+     */
+    public String getType();
+
+    /**
+     * Setter for <code>DB_ETERNAL.S_RESOURCE.IDENTIFIER</code>. 「identifier」- 当前资源所属的Model的标识
+     */
+    public ISResource setIdentifier(String value);
+
+    /**
+     * Getter for <code>DB_ETERNAL.S_RESOURCE.IDENTIFIER</code>. 「identifier」- 当前资源所属的Model的标识
+     */
+    public String getIdentifier();
+
+    /**
      * Setter for <code>DB_ETERNAL.S_RESOURCE.COMMENT</code>. 「comment」- 备注信息
      */
     public ISResource setComment(String value);
@@ -102,6 +122,46 @@ public interface ISResource extends Serializable {
      * Getter for <code>DB_ETERNAL.S_RESOURCE.MODE_TREE</code>. 「modeTree」- 该资源处理树（用户组）的模式
      */
     public String getModeTree();
+
+    /**
+     * Setter for <code>DB_ETERNAL.S_RESOURCE.VIRTUAL</code>. 「virtual」- 虚拟资源
+     */
+    public ISResource setVirtual(Boolean value);
+
+    /**
+     * Getter for <code>DB_ETERNAL.S_RESOURCE.VIRTUAL</code>. 「virtual」- 虚拟资源
+     */
+    public Boolean getVirtual();
+
+    /**
+     * Setter for <code>DB_ETERNAL.S_RESOURCE.SEEK_SYNTAX</code>. 「seekSyntax」- 访问者语法
+     */
+    public ISResource setSeekSyntax(String value);
+
+    /**
+     * Getter for <code>DB_ETERNAL.S_RESOURCE.SEEK_SYNTAX</code>. 「seekSyntax」- 访问者语法
+     */
+    public String getSeekSyntax();
+
+    /**
+     * Setter for <code>DB_ETERNAL.S_RESOURCE.SEEK_CONFIG</code>. 「seekConfig」- 访问者配置
+     */
+    public ISResource setSeekConfig(String value);
+
+    /**
+     * Getter for <code>DB_ETERNAL.S_RESOURCE.SEEK_CONFIG</code>. 「seekConfig」- 访问者配置
+     */
+    public String getSeekConfig();
+
+    /**
+     * Setter for <code>DB_ETERNAL.S_RESOURCE.SEEK_COMPONENT</code>. 「seekComponent」- 访问者组件
+     */
+    public ISResource setSeekComponent(String value);
+
+    /**
+     * Getter for <code>DB_ETERNAL.S_RESOURCE.SEEK_COMPONENT</code>. 「seekComponent」- 访问者组件
+     */
+    public String getSeekComponent();
 
     /**
      * Setter for <code>DB_ETERNAL.S_RESOURCE.SIGMA</code>. 「sigma」- 统一标识
@@ -211,11 +271,17 @@ public interface ISResource extends Serializable {
         setKey(json.getString("KEY"));
         setCode(json.getString("CODE"));
         setName(json.getString("NAME"));
+        setType(json.getString("TYPE"));
+        setIdentifier(json.getString("IDENTIFIER"));
         setComment(json.getString("COMMENT"));
         setLevel(json.getInteger("LEVEL"));
         setModeRole(json.getString("MODE_ROLE"));
         setModeGroup(json.getString("MODE_GROUP"));
         setModeTree(json.getString("MODE_TREE"));
+        setVirtual(json.getBoolean("VIRTUAL"));
+        setSeekSyntax(json.getString("SEEK_SYNTAX"));
+        setSeekConfig(json.getString("SEEK_CONFIG"));
+        setSeekComponent(json.getString("SEEK_COMPONENT"));
         setSigma(json.getString("SIGMA"));
         setCategory(json.getString("CATEGORY"));
         setLanguage(json.getString("LANGUAGE"));
@@ -234,11 +300,17 @@ public interface ISResource extends Serializable {
         json.put("KEY",getKey());
         json.put("CODE",getCode());
         json.put("NAME",getName());
+        json.put("TYPE",getType());
+        json.put("IDENTIFIER",getIdentifier());
         json.put("COMMENT",getComment());
         json.put("LEVEL",getLevel());
         json.put("MODE_ROLE",getModeRole());
         json.put("MODE_GROUP",getModeGroup());
         json.put("MODE_TREE",getModeTree());
+        json.put("VIRTUAL",getVirtual());
+        json.put("SEEK_SYNTAX",getSeekSyntax());
+        json.put("SEEK_CONFIG",getSeekConfig());
+        json.put("SEEK_COMPONENT",getSeekComponent());
         json.put("SIGMA",getSigma());
         json.put("CATEGORY",getCategory());
         json.put("LANGUAGE",getLanguage());

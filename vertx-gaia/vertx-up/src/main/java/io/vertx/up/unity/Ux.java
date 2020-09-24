@@ -6,26 +6,26 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.jwt.JWT;
-import io.vertx.ext.jwt.JWTOptions;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.tp.plugin.database.DataPool;
 import io.vertx.tp.plugin.jooq.JooqInfix;
 import io.vertx.up.atom.query.Pagination;
 import io.vertx.up.commune.Envelop;
 import io.vertx.up.commune.Record;
-import io.vertx.up.commune.config.Dict;
-import io.vertx.up.commune.config.DictEpsilon;
-import io.vertx.up.commune.config.DictFabric;
+import io.vertx.up.commune.exchange.DictConfig;
+import io.vertx.up.commune.exchange.DictEpsilon;
+import io.vertx.up.commune.exchange.DictFabric;
 import io.vertx.up.eon.Constants;
 import io.vertx.up.eon.Strings;
 import io.vertx.up.eon.em.ChangeFlag;
 import io.vertx.up.exception.WebException;
 import io.vertx.up.fn.Fn;
 import io.vertx.up.fn.wait.Log;
-import io.vertx.up.unity.jq.UxJoin;
-import io.vertx.up.unity.jq.UxJooq;
+import io.vertx.up.uca.jooq.UxJoin;
+import io.vertx.up.uca.jooq.UxJooq;
 import io.vertx.up.util.Ut;
 
 import java.time.Instant;
@@ -203,6 +203,14 @@ public final class Ux {
 
     public static <T> Future<T> future() {
         return To.future(null);
+    }
+
+    public static Future<JsonArray> futureJArray() {
+        return To.future(new JsonArray());
+    }
+
+    public static Future<JsonObject> futureJObject() {
+        return To.future(new JsonObject());
     }
 
     public static Future<JsonObject> complex(final JsonObject input, final Predicate<JsonObject> predicate, final Supplier<Future<JsonObject>> executor) {
@@ -685,7 +693,7 @@ public final class Ux {
         return DictTool.mapEpsilon(epsilon);
     }
 
-    public static Future<ConcurrentMap<String, JsonArray>> dictCalc(final Dict dict, final MultiMap paramsMap) {
+    public static Future<ConcurrentMap<String, JsonArray>> dictCalc(final DictConfig dict, final MultiMap paramsMap) {
         return DictTool.dictCalc(dict, paramsMap);
     }
 
@@ -789,6 +797,10 @@ public final class Ux {
 
         public static UxJoin on(final String configFile) {
             return new UxJoin(configFile);
+        }
+
+        public static UxJoin on() {
+            return new UxJoin(null);
         }
     }
 

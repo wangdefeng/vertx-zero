@@ -9,6 +9,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.up.commune.Record;
+import io.vertx.up.commune.element.CParam;
 import io.vertx.up.fn.Actuator;
 
 import java.io.File;
@@ -22,7 +23,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.*;
@@ -76,6 +76,10 @@ public final class Ut {
 
     public static <T> Set<T> diff(final Set<T> subtrahend, final Set<T> minuend) {
         return Arithmetic.diff(subtrahend, minuend);
+    }
+
+    public static <T> Set<T> each(final Set<T> source, final Consumer<T>... consumers) {
+        return (Set<T>) Arithmetic.each(source, consumers);
     }
 
     /*
@@ -183,6 +187,10 @@ public final class Ut {
 
     public static JsonObject elementSubset(final JsonObject input, final String... fields) {
         return Statute.subset(input, fields);
+    }
+
+    public static JsonObject elementSubset(final JsonObject input, final Set<String> set) {
+        return Statute.subset(input, set);
     }
 
     public static JsonArray elementSubset(final JsonArray input, final Function<JsonObject, Boolean> fnFilter) {
@@ -406,6 +414,7 @@ public final class Ut {
      * 7) field / fields
      * 8) contract / contractAsync ( @Contract )
      * 9) plugin
+     * 10) assign
      */
     public static <T> T plugin(final JsonObject options, final String pluginKey, final Class<T> interfaceCls) {
         return Instance.plugin(options, pluginKey, interfaceCls);
@@ -500,6 +509,10 @@ public final class Ut {
         return Future.succeededFuture(Boolean.TRUE);
     }
 
+    public static void assign(final JsonObject target, final JsonObject source, final String... fields) {
+        Jackson.assign(target, source, fields);
+    }
+
     /*
      * IO method here to read file content & folder resource
      * 1) ioFiles / ioDirectories ( Folder Reading )
@@ -538,6 +551,10 @@ public final class Ut {
 
     public static JsonArray ioJArray(final String filename) {
         return Define.sureJArray(IO.getJArray(filename));
+    }
+
+    public static boolean ioRm(final String filename) {
+        return IO.deleteFile(filename);
     }
 
     public static JsonObject ioJObject(final String filename) {
@@ -660,7 +677,41 @@ public final class Ut {
      * 3) ifEmpty / ifJEmpty
      * 4) ifJValue -> JsonObject field filling of value
      * 5) ifJCopy -> JsonObject copy self
+     * 6) ifJObject / ifJArray /
+     * 7) ifString / ifStrings
      */
+
+    public static void ifStrings(final JsonArray array, final String... fields) {
+        It.itJArray(array).forEach(json -> Apply.ifString(json, fields));
+    }
+
+    public static void ifString(final JsonObject json, final String... fields) {
+        Apply.ifString(json, fields);
+    }
+
+    public static Function<JsonArray, Future<JsonArray>> ifStrings(final String... fields) {
+        return Apply.ifStrings(fields);
+    }
+
+    public static Function<JsonObject, Future<JsonObject>> ifString(final String... fields) {
+        return Apply.ifString(fields);
+    }
+
+    public static Function<JsonObject, Future<JsonObject>> ifJObject(final String... fields) {
+        return Apply.ifJObject(fields);
+    }
+
+    public static void ifJObject(final JsonObject json, final String... fields) {
+        Apply.ifJson(json, fields);
+    }
+
+    public static Function<JsonArray, Future<JsonArray>> ifJArray(final String... fields) {
+        return Apply.ifJArray(fields);
+    }
+
+    public static void ifJArray(final JsonArray array, final String... fields) {
+        It.itJArray(array).forEach(json -> Apply.ifJson(json, fields));
+    }
 
     public static JsonObject ifMerge(final JsonObject target, final JsonObject source) {
         return Jackson.flatMerge(target, source);
@@ -809,6 +860,10 @@ public final class Ut {
         return Period.equalDate(left, right);
     }
 
+    public static boolean isUUID(final String literal) {
+        return Is.isUUID(literal);
+    }
+
     public static boolean isBoolean(final Class<?> clazz) {
         return Types.isBoolean(clazz);
     }
@@ -873,33 +928,14 @@ public final class Ut {
         return Types.isDate(value);
     }
 
+    public static boolean isDate(final Class<?> type) {
+        return Types.isDate(type);
+    }
+
     public static boolean isSubset(final JsonObject cond, final JsonObject record) {
         return Is.isSubset(cond, record);
     }
 
-    public static boolean isChanged(final JsonObject oldRecord, final JsonObject newRecord,
-                                    final Set<String> ignores, final ConcurrentMap<String, Class<?>> dateFields) {
-        return Is.isChanged(oldRecord, newRecord, ignores, dateFields, null);
-    }
-
-    public static boolean isChanged(final JsonObject oldRecord, final JsonObject newRecord,
-                                    final Set<String> ignores, final ConcurrentMap<String, Class<?>> dateFields,
-                                    final BiFunction<String, Class<?>, BiPredicate<Object, Object>> fnPredicate) {
-        return Is.isChanged(oldRecord, newRecord, ignores, dateFields, fnPredicate);
-    }
-
-    public static TemporalUnit toUnit(final Class<?> clazz) {
-        return Is.getUnit(clazz);
-    }
-
-    public static boolean isSame(final Object oldValue, final Object newValue, final boolean isDate,
-                                 final TemporalUnit unit) {
-        return Is.isSame(oldValue, newValue, isDate, unit);
-    }
-
-    public static boolean isSame(final Object oldValue, final Object newValue, final boolean isDate) {
-        return Is.isSame(oldValue, newValue, isDate, null);
-    }
 
     public static boolean isJArray(final String literal) {
         return Types.isJArray(literal);
@@ -941,6 +977,10 @@ public final class Ut {
         return StringUtil.isNil(input);
     }
 
+    public static boolean isNilOr(final String... inputs) {
+        return StringUtil.isNilOr(inputs);
+    }
+
     public static boolean isNil(final JsonObject json) {
         return Types.isEmpty(json);
     }
@@ -963,6 +1003,29 @@ public final class Ut {
 
     public static boolean notNil(final JsonArray jsonArray) {
         return !isNil(jsonArray);
+    }
+
+    /*
+     * Complex compare method for two record
+     * - oldRecord: Old data record that stored in our system
+     * - newRecord: New data record that come into our system
+     * There are additional parameters for different usage
+     * 1) - ignores: You can set ignore fields that will be skipped when comparing
+     * 2) - typeMap: It's required because it contains ( field = Class<?> ) to record the type mapping
+     *
+     * 3) - fnPredicate: Function to check when standard comparing return FALSE
+     * 4) - arrayDiff: It contains array diff configuration instead of fixed
+     */
+    public static boolean isChanged(
+            final CParam cParam,
+            /* */
+            final BiFunction<String, Class<?>, BiPredicate<Object, Object>> fnPredicate) {
+        return Is.isChanged(cParam, fnPredicate);
+    }
+
+    public static boolean isSame(final Object oldValue, final Object newValue,
+                                 final Class<?> type, final Set<String> diffSet) {
+        return Is.isSame(oldValue, newValue, type, diffSet);
     }
 
     /*
@@ -1036,6 +1099,10 @@ public final class Ut {
 
     public static JsonObject toJObject(final String literal) {
         return To.toJObject(literal);
+    }
+
+    public static JsonObject toJObject(final Object value) {
+        return Jackson.toJObject(value);
     }
 
     public static JsonObject toJObject(final Map<String, Object> map) {

@@ -7,8 +7,8 @@ import io.vertx.tp.crud.atom.IxModule;
 import io.vertx.tp.ke.cv.KeField;
 import io.vertx.tp.ke.refine.Ke;
 import io.vertx.up.log.Annal;
+import io.vertx.up.uca.jooq.UxJooq;
 import io.vertx.up.unity.Ux;
-import io.vertx.up.unity.jq.UxJooq;
 import io.vertx.up.util.Ut;
 
 import java.time.Instant;
@@ -40,7 +40,7 @@ class IxFn {
             final JsonObject criteria, final IxModule config) {
         final String pojo = config.getPojo();
         return dao -> {
-            IxLog.infoDao(LOGGER, "( JqTool ) Dao -> {0}, pojo = {1}", dao.getClass(), pojo);
+            IxLog.infoDao(LOGGER, "( JqTool ) Dao -> {0}, pojo = {1}", config.getDaoCls(), pojo);
             // Here must put condition here.
             if (Ut.notNil(pojo)) {
                 return dao.searchAsync(criteria, pojo)

@@ -9,10 +9,10 @@ import io.vertx.tp.ke.cv.KeField;
 import io.vertx.tp.rbac.cv.AuthMsg;
 import io.vertx.tp.rbac.cv.em.OwnerType;
 import io.vertx.tp.rbac.refine.Sc;
-import io.vertx.up.unity.Ux;
 import io.vertx.up.atom.query.Inquiry;
-import io.vertx.up.log.Annal;
 import io.vertx.up.eon.Strings;
+import io.vertx.up.log.Annal;
+import io.vertx.up.unity.Ux;
 import io.vertx.up.util.Ut;
 
 import java.util.List;
@@ -25,10 +25,10 @@ public class ViewService implements ViewStub {
     @Override
     public Future<SView> fetchMatrix(final String userId, final String resourceId, final String view) {
         /* Find user matrix */
-        final JsonObject filters = toFilters(resourceId, view);
+        final JsonObject filters = this.toFilters(resourceId, view);
         filters.put("owner", userId);
         filters.put("ownerType", OwnerType.USER.name());
-        Sc.infoResource(LOGGER, AuthMsg.VIEW_PROCESS, "fetch", filters.encode());
+        Sc.infoResource(ViewService.LOGGER, AuthMsg.VIEW_PROCESS, "fetch", filters.encode());
         return Ux.Jooq.on(SViewDao.class)
                 .fetchOneAsync(new JsonObject().put("criteria", filters));
     }
@@ -37,12 +37,12 @@ public class ViewService implements ViewStub {
     public Future<SView> saveMatrix(final String userId, final String resourceId,
                                     final String view, final JsonArray projection) {
         /* Find user matrix */
-        final JsonObject filters = toFilters(resourceId, view);
+        final JsonObject filters = this.toFilters(resourceId, view);
         filters.put("owner", userId);
         filters.put("ownerType", OwnerType.USER.name());
         /* SView projection */
-        Sc.infoResource(LOGGER, AuthMsg.VIEW_PROCESS, "save", filters.encode());
-        final SView myView = toView(filters, projection);
+        Sc.infoResource(ViewService.LOGGER, AuthMsg.VIEW_PROCESS, "save", filters.encode());
+        final SView myView = this.toView(filters, projection);
         return Ux.Jooq.on(SViewDao.class)
                 .upsertAsync(filters, myView);
     }
@@ -50,7 +50,7 @@ public class ViewService implements ViewStub {
     @Override
     public Future<List<SView>> fetchMatrix(final JsonArray roleIds, final String resourceId, final String view) {
         /* Find user matrix */
-        final JsonObject filters = toFilters(resourceId, view);
+        final JsonObject filters = this.toFilters(resourceId, view);
         filters.put("owner,i", roleIds);
         filters.put("ownerType", OwnerType.ROLE.name());
         return Ux.Jooq.on(SViewDao.class)

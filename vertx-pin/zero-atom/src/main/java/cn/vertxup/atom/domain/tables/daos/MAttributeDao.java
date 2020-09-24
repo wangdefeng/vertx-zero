@@ -91,20 +91,6 @@ public class MAttributeDao extends DAOImpl<MAttributeRecord, cn.vertxup.atom.dom
     }
 
     /**
-     * Fetch records that have <code>SOURCE IN (values)</code>
-     */
-    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySource(String... values) {
-        return fetch(MAttribute.M_ATTRIBUTE.SOURCE, values);
-    }
-
-    /**
-     * Fetch records that have <code>SOURCE_FIELD IN (values)</code>
-     */
-    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySourceField(String... values) {
-        return fetch(MAttribute.M_ATTRIBUTE.SOURCE_FIELD, values);
-    }
-
-    /**
      * Fetch records that have <code>EXPRESSION IN (values)</code>
      */
     public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchByExpression(String... values) {
@@ -147,6 +133,55 @@ public class MAttributeDao extends DAOImpl<MAttributeRecord, cn.vertxup.atom.dom
     }
 
     /**
+     * Fetch records that have <code>SOURCE IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySource(String... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.SOURCE, values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_FIELD IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySourceField(String... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.SOURCE_FIELD, values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_CONFIG IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySourceConfig(String... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.SOURCE_CONFIG, values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_REFERENCE IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySourceReference(String... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.SOURCE_REFERENCE, values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_EXTERNAL IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchBySourceExternal(String... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.SOURCE_EXTERNAL, values);
+    }
+
+    /**
+     * Fetch records that have <code>IS_ARRAY IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchByIsArray(Boolean... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.IS_ARRAY, values);
+    }
+
+    /**
+     * Fetch records that have <code>IS_REFER IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchByIsRefer(Boolean... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.IS_REFER, values);
+    }
+
+    /**
      * Fetch records that have <code>IS_SYNC_IN IN (values)</code>
      */
     public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchByIsSyncIn(Boolean... values) {
@@ -172,6 +207,13 @@ public class MAttributeDao extends DAOImpl<MAttributeRecord, cn.vertxup.atom.dom
      */
     public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchByIsTrack(Boolean... values) {
         return fetch(MAttribute.M_ATTRIBUTE.IS_TRACK, values);
+    }
+
+    /**
+     * Fetch records that have <code>IS_CONFIRM IN (values)</code>
+     */
+    public List<cn.vertxup.atom.domain.tables.pojos.MAttribute> fetchByIsConfirm(Boolean... values) {
+        return fetch(MAttribute.M_ATTRIBUTE.IS_CONFIRM, values);
     }
 
     /**
@@ -266,20 +308,6 @@ public class MAttributeDao extends DAOImpl<MAttributeRecord, cn.vertxup.atom.dom
     }
 
     /**
-     * Fetch records that have <code>SOURCE IN (values)</code> asynchronously
-     */
-    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceAsync(List<String> values) {
-        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE,values);
-    }
-
-    /**
-     * Fetch records that have <code>SOURCE_FIELD IN (values)</code> asynchronously
-     */
-    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceFieldAsync(List<String> values) {
-        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE_FIELD,values);
-    }
-
-    /**
      * Fetch records that have <code>EXPRESSION IN (values)</code> asynchronously
      */
     public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchByExpressionAsync(List<String> values) {
@@ -322,6 +350,55 @@ public class MAttributeDao extends DAOImpl<MAttributeRecord, cn.vertxup.atom.dom
     }
 
     /**
+     * Fetch records that have <code>SOURCE IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceAsync(List<String> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE,values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_FIELD IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceFieldAsync(List<String> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE_FIELD,values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_CONFIG IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceConfigAsync(List<String> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE_CONFIG,values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_REFERENCE IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceReferenceAsync(List<String> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE_REFERENCE,values);
+    }
+
+    /**
+     * Fetch records that have <code>SOURCE_EXTERNAL IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchBySourceExternalAsync(List<String> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.SOURCE_EXTERNAL,values);
+    }
+
+    /**
+     * Fetch records that have <code>IS_ARRAY IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchByIsArrayAsync(List<Boolean> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.IS_ARRAY,values);
+    }
+
+    /**
+     * Fetch records that have <code>IS_REFER IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchByIsReferAsync(List<Boolean> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.IS_REFER,values);
+    }
+
+    /**
      * Fetch records that have <code>IS_SYNC_IN IN (values)</code> asynchronously
      */
     public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchByIsSyncInAsync(List<Boolean> values) {
@@ -347,6 +424,13 @@ public class MAttributeDao extends DAOImpl<MAttributeRecord, cn.vertxup.atom.dom
      */
     public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchByIsTrackAsync(List<Boolean> values) {
         return fetchAsync(MAttribute.M_ATTRIBUTE.IS_TRACK,values);
+    }
+
+    /**
+     * Fetch records that have <code>IS_CONFIRM IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<cn.vertxup.atom.domain.tables.pojos.MAttribute>> fetchByIsConfirmAsync(List<Boolean> values) {
+        return fetchAsync(MAttribute.M_ATTRIBUTE.IS_CONFIRM,values);
     }
 
     /**

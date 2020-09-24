@@ -162,7 +162,24 @@ final class Jackson {
             if (Types.isJArray(value)) {
                 result.addAll((JsonArray) value);
             } else {
-                result.add(value.toString());
+                final JsonArray direct = To.toJArray(value.toString());
+                if (direct.isEmpty()) {
+                    result.add(value.toString());
+                } else {
+                    result.addAll(direct);
+                }
+            }
+        }, value);
+        return result;
+    }
+
+    static JsonObject toJObject(final Object value) {
+        final JsonObject result = new JsonObject();
+        Fn.safeNull(() -> {
+            if (Types.isJObject(value)) {
+                result.mergeIn((JsonObject) value, true);
+            } else {
+                result.mergeIn(To.toJObject(value.toString()), true);
             }
         }, value);
         return result;
@@ -220,5 +237,14 @@ final class Jackson {
                 target.put(field, value);
             }
         }, target, source, field);
+    }
+
+    static void assign(final JsonObject target, final JsonObject source, final String... fields) {
+        if (0 < fields.length) {
+            Arrays.stream(fields)
+                    .filter(source::containsKey)
+                    .filter(field -> Objects.nonNull(source.getValue(field)))
+                    .forEach(field -> target.put(field, source.getValue(field)));
+        }
     }
 }

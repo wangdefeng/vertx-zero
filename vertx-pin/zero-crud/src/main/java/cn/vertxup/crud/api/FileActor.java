@@ -22,11 +22,11 @@ import io.vertx.up.annotations.Plugin;
 import io.vertx.up.annotations.Queue;
 import io.vertx.up.atom.query.Inquiry;
 import io.vertx.up.commune.Envelop;
-import io.vertx.up.commune.config.DictFabric;
+import io.vertx.up.commune.exchange.DictFabric;
 import io.vertx.up.fn.Fn;
 import io.vertx.up.log.Annal;
+import io.vertx.up.uca.jooq.UxJooq;
 import io.vertx.up.unity.Ux;
-import io.vertx.up.unity.jq.UxJooq;
 import io.vertx.up.util.Ut;
 
 import java.io.File;
@@ -275,7 +275,7 @@ public class FileActor {
                 /* Final exporting her for excel download */
                 .compose(data -> {
                     final String actor = Ux.getString(request);
-                    return this.client.exportTable(actor, data);
+                    return this.client.exportAsync(actor, data);
                 })
                 .compose(buffer -> Ux.future(Envelop.success(buffer)))
         );

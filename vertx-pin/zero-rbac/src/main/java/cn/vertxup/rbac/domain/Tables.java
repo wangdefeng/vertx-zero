@@ -12,11 +12,14 @@ import cn.vertxup.rbac.domain.tables.RUserGroup;
 import cn.vertxup.rbac.domain.tables.RUserRole;
 import cn.vertxup.rbac.domain.tables.SAction;
 import cn.vertxup.rbac.domain.tables.SGroup;
+import cn.vertxup.rbac.domain.tables.SPacket;
+import cn.vertxup.rbac.domain.tables.SPath;
 import cn.vertxup.rbac.domain.tables.SPermission;
 import cn.vertxup.rbac.domain.tables.SResource;
 import cn.vertxup.rbac.domain.tables.SRole;
 import cn.vertxup.rbac.domain.tables.SUser;
 import cn.vertxup.rbac.domain.tables.SView;
+import cn.vertxup.rbac.domain.tables.SVisitant;
 
 import javax.annotation.Generated;
 
@@ -75,6 +78,16 @@ public class Tables {
     public static final SGroup S_GROUP = cn.vertxup.rbac.domain.tables.SGroup.S_GROUP;
 
     /**
+     * The table <code>DB_ETERNAL.S_PACKET</code>.
+     */
+    public static final SPacket S_PACKET = cn.vertxup.rbac.domain.tables.SPacket.S_PACKET;
+
+    /**
+     * The table <code>DB_ETERNAL.S_PATH</code>.
+     */
+    public static final SPath S_PATH = cn.vertxup.rbac.domain.tables.SPath.S_PATH;
+
+    /**
      * The table <code>DB_ETERNAL.S_PERMISSION</code>.
      */
     public static final SPermission S_PERMISSION = cn.vertxup.rbac.domain.tables.SPermission.S_PERMISSION;
@@ -98,4 +111,9 @@ public class Tables {
      * The table <code>DB_ETERNAL.S_VIEW</code>.
      */
     public static final SView S_VIEW = cn.vertxup.rbac.domain.tables.SView.S_VIEW;
+
+    /**
+     * The table <code>DB_ETERNAL.S_VISITANT</code>.
+     */
+    public static final SVisitant S_VISITANT = cn.vertxup.rbac.domain.tables.SVisitant.S_VISITANT;
 }
