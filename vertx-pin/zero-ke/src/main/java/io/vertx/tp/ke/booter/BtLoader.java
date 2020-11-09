@@ -6,6 +6,7 @@ import io.vertx.tp.plugin.excel.ExcelClient;
 import io.vertx.tp.plugin.excel.ExcelInfix;
 import io.vertx.tp.plugin.excel.atom.ExTable;
 import io.vertx.tp.plugin.jooq.JooqInfix;
+import io.vertx.tp.plugin.redis.RedisInfix;
 import io.vertx.up.log.Annal;
 import io.vertx.up.unity.Ux;
 import io.vertx.up.util.Ut;
@@ -27,6 +28,8 @@ class BtLoader {
         ExcelInfix.init(Ux.nativeVertx());
         /* Jooq Init */
         JooqInfix.init(Ux.nativeVertx());
+        /* Redis Infix to disabled */
+        RedisInfix.disabled();
     }
 
     /*
@@ -82,11 +85,27 @@ class BtLoader {
         /*
          * Build more excel client
          */
+        /*
         final ExcelClient client = ExcelInfix.getClient();
         client.importAsync(filename, handler -> {
             out(filename);
             callback.handle(Future.succeededFuture(filename));
-        });
+        });*/
+
+        final WorkerExecutor executor = Ux.nativeWorker(filename);
+        executor.<String>executeBlocking(
+                pre -> {
+                    final ExcelClient client = ExcelInfix.createClient();
+                    client.importAsync(filename, handler -> {
+                        if (handler.succeeded()) {
+                            pre.complete(filename);
+                        } else {
+                            pre.fail(handler.cause());
+                        }
+                    });
+                },
+                post -> callback.handle(Future.succeededFuture(post.result()))
+        );
     }
 
     /*
@@ -133,7 +152,10 @@ class BtLoader {
 
     private static Future<String> importFuture(final String filename) {
         final Promise<String> promise = Promise.promise();
-        doImport(filename, handler -> promise.complete(handler.result()));
+        doImport(filename, handler -> {
+            promise.complete(handler.result());
+            out(filename);
+        });
         return promise.future();
     }
 }

@@ -4,6 +4,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.up.atom.Refer;
 import io.vertx.up.eon.Values;
 import io.vertx.up.fn.Fn;
 import io.vertx.up.log.Annal;
@@ -43,6 +44,9 @@ class Async {
                      *    .compose(future[2])
                      *    .compose(...)
                      */
+                    final Refer response = new Refer();
+                    response.add(input);
+
                     for (int idx = 1; idx < queues.size(); idx++) {
                         final int current = idx;
                         first = first.compose(json -> {
@@ -53,9 +57,20 @@ class Async {
                                  */
                                 return To.future(json);
                             } else {
-                                return future;
+                                return future
+                                        /*
+                                         * Replace the result with successed item here
+                                         * If success
+                                         * -- replace previous response with next
+                                         * If failure
+                                         * -- returned current json and replace previous response with current
+                                         *
+                                         * The step stopped
+                                         */
+                                        .compose(response::future)
+                                        .otherwise(Ux.otherwise(() -> response.add(json).get()));
                             }
-                        });
+                        }).otherwise(Ux.otherwise(() -> response.get()));
                     }
                     return first;
                 }
@@ -74,7 +89,7 @@ class Async {
                 () -> completableFuture.thenAcceptAsync((item) -> Fn.safeSemi(
                         null == item, null,
                         () -> future.complete(new JsonObject()),
-                        () -> future.complete(To.toJson(item, pojo))
+                        () -> future.complete(To.toJObject(item, pojo))
                 )).exceptionally((ex) -> {
                     LOGGER.jvm(ex);
                     future.fail(ex);
@@ -108,12 +123,19 @@ class Async {
                                                  final Supplier<Future<JsonObject>> supplier,
                                                  final Function<JsonObject, JsonObject> updateFun) {
         return Fn.match(
-                Fn.fork(() -> Future.succeededFuture(To.toJson(entity, pojo))
+                Fn.fork(() -> Future.succeededFuture(To.toJObject(entity, pojo))
                         .compose(item -> null == updateFun ?
                                 Future.succeededFuture(item) :
                                 Future.succeededFuture(updateFun.apply(item))
                         )
                 ),
                 Fn.branch(null == entity, supplier));
+    }
+
+    static <T> Function<Throwable, Future<T>> toErrorFuture(final Supplier<T> input) {
+        return ex -> {
+            if (Objects.nonNull(ex)) ex.printStackTrace();
+            return Future.succeededFuture(input.get());
+        };
     }
 }

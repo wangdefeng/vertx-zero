@@ -55,7 +55,7 @@ public class FieldService implements FieldStub {
         return this.deleteByControlId(controlId)
                 .compose(result -> Ux.Jooq.on(UiFieldDao.class)
                         .insertAsync(fields)
-                        .compose(Ux::fnJArray)
+                        .compose(Ux::futureA)
                         // 3. mountOut
                         .compose(updatedFields -> {
                             final List<JsonObject> list = Ut.itJArray(updatedFields)
@@ -68,7 +68,7 @@ public class FieldService implements FieldStub {
     @Override
     public Future<Boolean> deleteByControlId(final String controlId) {
         return Ux.Jooq.on(UiFieldDao.class)
-                .deleteAsync(new JsonObject().put(KeField.Ui.CONTROL_ID, controlId));
+                .deleteByAsync(new JsonObject().put(KeField.Ui.CONTROL_ID, controlId));
     }
 
     private Future<JsonArray> attachConfig(final JsonArray fieldJson) {
