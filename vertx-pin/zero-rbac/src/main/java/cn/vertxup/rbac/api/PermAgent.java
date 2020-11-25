@@ -14,7 +14,9 @@ import javax.ws.rs.*;
 @EndPoint
 @Path("/api")
 public interface PermAgent {
-
+    /*
+     * permission set fetching
+     */
     @Path("/permission/groups/by/sigma")
     @GET
     @Address(Addr.Authority.PERMISSION_GROUP)
@@ -35,4 +37,45 @@ public interface PermAgent {
     @Address(Addr.Authority.PERMISSION_SAVE)
     JsonArray savePerm(@PathParam("roleId") String roleId,
                        @BodyParam JsonArray permissions);
+
+    // ======================= CRUD Replace =============================
+    /*
+     * Single Api for the permission management of un-related
+     * - 1) The permissions are not related to any S_PERM_SET
+     * - 2) The actions are also not related to any S_PERMISSION
+     * The query data format is the same as standard `search engine` api here
+     * {
+     *      "criteria": {},
+     *      "projection": [],
+     *      "pager": {
+     *          "page": xx,
+     *          "size": yy
+     *      },
+     *      "sorter": []
+     * }
+     */
+    @Path("/permission/by/freedom")
+    @POST
+    @Address(Addr.Perm.PERMISSION_UN_READY)
+    JsonArray searchUnReady(@BodyParam JsonObject query);
+
+    @Path("/permission/:key")
+    @GET
+    @Address(Addr.Perm.BY_ID)
+    JsonObject fetchById(@PathParam("key") String key);
+
+    @Path("/permission")
+    @POST
+    @Address(Addr.Perm.ADD)
+    JsonObject add(@BodyParam JsonObject param);
+
+    @Path("/permission/:key")
+    @PUT
+    @Address(Addr.Perm.EDIT)
+    JsonObject update(@PathParam("key") String key, @BodyParam JsonObject params);
+
+    @Path("/permission/:key")
+    @DELETE
+    @Address(Addr.Perm.DELETE)
+    JsonObject remove(@PathParam("key") String key);
 }

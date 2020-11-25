@@ -58,6 +58,19 @@ public interface Addr {
         String IMPORT = Prefix._EVENT + "X-IMPORT/USER";
     }
 
+    interface Perm {
+        /* Search all permissions that are not related */
+        String PERMISSION_UN_READY = Prefix._EVENT + "X-PERMISSION/UN-READY";
+
+        /*
+         * CRUD replaced
+         */
+        String BY_ID = Prefix._EVENT + "X-PERMISSION/CRUD/READ";
+        String ADD = Prefix._EVENT + "X-PERMISSION/CRUD/CREATE";
+        String EDIT = Prefix._EVENT + "X-PERMISSION/CRUD/UPDATE";
+        String DELETE = Prefix._EVENT + "X-PERMISSION/CRUD/DELETE";
+    }
+
     interface Authority {
         /* Api Seeking（Action Only） */
         String ACTION_SEEK = Prefix._EVENT + "X-ACTION/SEEK";

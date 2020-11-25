@@ -70,16 +70,56 @@ public final class Ut {
         return Arithmetic.intersect(left, right);
     }
 
+    public static <T> List<T> intersect(final List<T> left, final List<T> right) {
+        return new ArrayList<>(intersect(new HashSet<>(left), new HashSet<>(right)));
+    }
+
+    public static <T, V> Set<T> intersect(final Set<T> left, final Set<T> right, final Function<T, V> fnGet) {
+        return Arithmetic.intersect(left, right, fnGet);
+    }
+
+    public static <T, V> List<T> intersect(final List<T> left, final List<T> right, final Function<T, V> fnGet) {
+        return new ArrayList<>(intersect(new HashSet<>(left), new HashSet<>(right), fnGet));
+    }
+
     public static <T> Set<T> union(final Set<T> left, final Set<T> right) {
         return Arithmetic.union(left, right);
+    }
+
+    public static <T> List<T> union(final List<T> left, final List<T> right) {
+        return new ArrayList<>(union(new HashSet<>(left), new HashSet<>(right)));
+    }
+
+    public static <T, V> Set<T> union(final Set<T> left, final Set<T> right, final Function<T, V> fnGet) {
+        return Arithmetic.union(left, right, fnGet);
+    }
+
+    public static <T, V> List<T> union(final List<T> left, final List<T> right, final Function<T, V> fnGet) {
+        return new ArrayList<>(union(new HashSet<>(left), new HashSet<>(right), fnGet));
     }
 
     public static <T> Set<T> diff(final Set<T> subtrahend, final Set<T> minuend) {
         return Arithmetic.diff(subtrahend, minuend);
     }
 
+    public static <T> List<T> diff(final List<T> substrahend, final List<T> minuend) {
+        return new ArrayList<>(diff(new HashSet<>(substrahend), new HashSet<>(minuend)));
+    }
+
+    public static <T, V> Set<T> diff(final Set<T> subtrahend, final Set<T> minuend, final Function<T, V> fnGet) {
+        return Arithmetic.diff(subtrahend, minuend, fnGet);
+    }
+
+    public static <T, V> List<T> diff(final List<T> subtrahend, final List<T> minuend, final Function<T, V> fnGet) {
+        return new ArrayList<>(diff(new HashSet<>(subtrahend), new HashSet<>(minuend), fnGet));
+    }
+
     public static <T> Set<T> each(final Set<T> source, final Consumer<T>... consumers) {
         return (Set<T>) Arithmetic.each(source, consumers);
+    }
+
+    public static <T> List<T> each(final List<T> source, final Consumer<T>... consumers) {
+        return (List<T>) Arithmetic.each(source, consumers);
     }
 
     /*
@@ -691,7 +731,7 @@ public final class Ut {
     /*
      * Flatting method for function executing
      * 1) ifMerge
-     * 2) ifNil / applyJNil
+     * 2) ifNil / ifJNil / ifTNil
      * 3) ifEmpty / ifJEmpty
      * 4) ifJValue -> JsonObject field filling of value
      * 5) ifJCopy -> JsonObject copy self
@@ -749,6 +789,10 @@ public final class Ut {
 
     public static <T> Function<T, Future<T>> ifNil(final Function<T, Future<T>> executor) {
         return Apply.applyNil(executor);
+    }
+
+    public static <T> Function<T, Future<JsonObject>> ifTNil(final Function<T, Future<JsonObject>> executor) {
+        return Apply.<T, JsonObject>applyNil(JsonObject::new, executor);
     }
 
     public static Function<JsonObject, Future<JsonObject>> ifJNil(final Function<JsonObject, Future<JsonObject>> executor) {
@@ -1044,6 +1088,14 @@ public final class Ut {
     public static boolean isSame(final Object oldValue, final Object newValue,
                                  final Class<?> type, final Set<String> diffSet) {
         return Is.isSame(oldValue, newValue, type, diffSet);
+    }
+
+    public static <T> boolean isSame(final T left, final T right) {
+        return Is.isSame(left, right);
+    }
+
+    public static <T, V> boolean isSame(final T left, final T right, final Function<T, V> fnGet) {
+        return Is.isSame(left, right, fnGet);
     }
 
     /*
